@@ -75,6 +75,13 @@
   .title span { color: var(--blue); }
 
   /* SCORE COUNTER */
+  .score-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
   .score {
     display: flex;
     align-items: center;
@@ -88,6 +95,59 @@
   }
 
   .score-icon { font-size: 16px; }
+
+  .points {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-light);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.2px;
+  }
+
+  /* LEVELS */
+  .levels {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 14px 0;
+  }
+
+  .level-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+
+  .level-chip input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--blue);
+  }
+
+  .level-chip:hover {
+    border-color: #BFDBFE;
+    background: #F8FAFF;
+  }
+
+  .level-chip:has(input:focus-visible) {
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    border-color: var(--blue);
+  }
 
   /* TIMER */
   .timer-section {
@@ -143,14 +203,44 @@
     border: 2px dashed var(--border);
   }
 
+  .formula-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
   .question-num {
     font-size: 12px;
     font-weight: 700;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
+    flex: 1;
   }
+
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .level-badge.lvl-1 { background: #ECFDF5; border-color: #BBF7D0; color: #166534; }
+  .level-badge.lvl-2 { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+  .level-badge.lvl-3 { background: #FFF7ED; border-color: #FED7AA; color: #9A3412; }
 
   .formula {
     font-family: 'Baloo 2', cursive;
@@ -306,6 +396,28 @@
     background: var(--blue-light);
   }
 
+  /* RESET BUTTON */
+  .btn-reset {
+    width: 100%;
+    height: 44px;
+    margin-top: 10px;
+    background: transparent;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: var(--red-light);
+  }
+
   /* FOOTER */
   .footer {
     margin-top: 28px;
@@ -359,10 +471,28 @@
   <!-- Header -->
   <div class="header">
     <div class="title">Calcul <span>Mental</span> 🧠</div>
-    <div class="score">
-      <span class="score-icon">⭐</span>
-      <span id="score-display">0 / 0</span>
+    <div class="score-wrap">
+      <div class="score">
+        <span id="score-display">✅ 0 /❓ 0</span>
+      </div>
+      <div class="points" id="points-display">Score : 0 point</div>
     </div>
+  </div>
+
+  <!-- Levels -->
+  <div class="levels" aria-label="Sélection des niveaux">
+    <label class="level-chip">
+      <input type="checkbox" id="lvl-1" checked />
+      Niveau 1 (1 pt)
+    </label>
+    <label class="level-chip">
+      <input type="checkbox" id="lvl-2" checked />
+      Niveau 2 (2 pts)
+    </label>
+    <label class="level-chip">
+      <input type="checkbox" id="lvl-3" checked />
+      Niveau 3 (3 pts)
+    </label>
   </div>
 
   <!-- Timer -->
@@ -378,7 +508,10 @@
 
   <!-- Formula -->
   <div class="formula-section">
-    <div class="question-num" id="question-num">Question —</div>
+    <div class="formula-top">
+      <div class="question-num" id="question-num">Question —</div>
+      <div class="level-badge lvl-1" id="level-badge">Niveau 1 · +1</div>
+    </div>
     <div class="formula" id="formula">Prêt·e ?</div>
   </div>
 
@@ -406,6 +539,9 @@
   </button>
 
   <div class="footer">Appuie sur <strong>Entrée</strong> pour vérifier · <strong>→</strong> pour passer</div>
+  <button class="btn-reset" id="btn-reset" onclick="resetStats()">
+    Reset
+  </button>
 </div>
 
 <script>
@@ -413,7 +549,9 @@
   const DURATION = 30;
   let goodAnswers = 0;
   let totalTests  = 0;
+  let points = 0;
   let currentAnswer = 0;
+  let currentLevel = 1;
   let timerInterval = null;
   let timeLeft = DURATION;
   let answered = false;
@@ -426,9 +564,11 @@
     if (saved.date === today) {
       goodAnswers = saved.good || 0;
       totalTests  = saved.total || 0;
+      points      = saved.points || 0;
     } else {
       goodAnswers = 0;
       totalTests  = 0;
+      points      = 0;
     }
     updateScore();
   }
@@ -439,33 +579,121 @@
       date: today,
       good: goodAnswers,
       total: totalTests
+      ,points
     }));
   }
 
+  function resetStats() {
+    stopTimer();
+    goodAnswers = 0;
+    totalTests = 0;
+    points = 0;
+    questionCount = 0;
+    answered = false;
+    saveStats();
+    updateScore();
+    nextQuestion();
+  }
+
+  function loadSettings() {
+    const saved = JSON.parse(localStorage.getItem('calcul-mental-settings') || '{}');
+    const levels = Array.isArray(saved.levels) ? saved.levels : [1, 2, 3];
+    document.getElementById('lvl-1').checked = levels.includes(1);
+    document.getElementById('lvl-2').checked = levels.includes(2);
+    document.getElementById('lvl-3').checked = levels.includes(3);
+  }
+
+  function saveSettings() {
+    localStorage.setItem('calcul-mental-settings', JSON.stringify({
+      levels: getSelectedLevels()
+    }));
+  }
+
+  function getSelectedLevels() {
+    const lvls = [];
+    if (document.getElementById('lvl-1').checked) lvls.push(1);
+    if (document.getElementById('lvl-2').checked) lvls.push(2);
+    if (document.getElementById('lvl-3').checked) lvls.push(3);
+    return lvls.length ? lvls : [1, 2, 3];
+  }
+
   function updateScore() {
+    const s = (n) => (n === 1 ? '' : 's');
     document.getElementById('score-display').textContent =
-      `${goodAnswers} bonne${goodAnswers > 1 ? 's' : ''} / ${totalTests} test${totalTests > 1 ? 's' : ''}`;
+      `✅ ${goodAnswers} / ❓ ${totalTests}`;
+    document.getElementById('points-display').textContent =
+      `Score : ${points} point${s(points)}`;
   }
 
   // ─── QUESTION GENERATION ────────────────────────────────
-  function generateQuestion() {
+  function levelLabel(level) {
+    return `Niveau ${level}`;
+  }
+
+  function updateLevelBadge(level) {
+    const el = document.getElementById('level-badge');
+    el.classList.remove('lvl-1', 'lvl-2', 'lvl-3');
+    el.classList.add(`lvl-${level}`);
+    el.textContent = `${levelLabel(level)} · +${level}`;
+  }
+
+  function pickLevel() {
+    const lvls = getSelectedLevels();
+    return lvls[Math.floor(Math.random() * lvls.length)];
+  }
+
+  function pickOperandsForLevel(level) {
+    // Constraints requested:
+    // - Niveau 1: 1..9 and 1..9
+    // - Niveau 2: 10..99 and 1..9 (either order)
+    // - Niveau 3: 10..99 and 10..99
+    if (level === 1) return { aMin: 1, aMax: 9, bMin: 1, bMax: 9 };
+    if (level === 2) {
+      const twoDigitsFirst = Math.random() < 0.5;
+      return twoDigitsFirst
+        ? { aMin: 10, aMax: 99, bMin: 1, bMax: 9 }
+        : { aMin: 1, aMax: 9, bMin: 10, bMax: 99 };
+    }
+    return { aMin: 10, aMax: 99, bMin: 10, bMax: 99 };
+  }
+
+  function generateQuestion(level) {
     const ops = ['+', '-', '×', '÷'];
     const op  = ops[Math.floor(Math.random() * ops.length)];
     let a, b, answer;
+    const { aMin, aMax, bMin, bMax } = pickOperandsForLevel(level);
 
     if (op === '+') {
-      a = rand(1, 50); b = rand(1, 50);
+      a = rand(aMin, aMax);
+      b = rand(bMin, bMax);
       answer = a + b;
     } else if (op === '-') {
-      a = rand(5, 60); b = rand(1, a);
+      a = rand(aMin, aMax);
+      b = rand(bMin, bMax);
+      if (b > a) [a, b] = [b, a];
       answer = a - b;
     } else if (op === '×') {
-      a = rand(2, 12); b = rand(2, 12);
+      a = rand(aMin, aMax);
+      b = rand(bMin, bMax);
       answer = a * b;
-    } else { // ÷
-      b = rand(2, 10);
-      answer = rand(1, 10);
-      a = b * answer;
+    } else { // ÷ (always exact)
+      // Build (a = b * q) ensuring:
+      // - a is within [aMin..aMax]
+      // - b is within [bMin..bMax]
+      // - q is an integer
+      // Retry until constraints satisfied.
+      for (;;) {
+        b = rand(bMin, bMax);
+        if (b === 0) continue;
+        const qMin = Math.ceil(aMin / b);
+        const qMax = Math.floor(aMax / b);
+        if (qMax < qMin) continue;
+        const q = rand(Math.max(1, qMin), Math.max(1, qMax));
+        a = b * q;
+        if (a < aMin || a > aMax) continue;
+        answer = a / b;
+        break;
+      }
     }
 
     return { a, b, op, answer };
@@ -519,7 +747,8 @@
 
   // ─── QUESTION FLOW ──────────────────────────────────────
   function nextQuestion() {
-    const q = generateQuestion();
+    currentLevel = pickLevel();
+    const q = generateQuestion(currentLevel);
     currentAnswer = q.answer;
     questionCount++;
 
@@ -531,6 +760,7 @@
     formulaEl.classList.add('pop');
 
     document.getElementById('question-num').textContent = `Question ${questionCount}`;
+    updateLevelBadge(currentLevel);
 
     // Reset input
     const input = document.getElementById('answer-input');
@@ -593,6 +823,7 @@
 
     if (isCorrect) {
       goodAnswers++;
+      points += currentLevel;
       input.classList.add('correct');
       const formulaEl = document.getElementById('formula');
       formulaEl.classList.add('pop');
@@ -687,7 +918,15 @@
   });
 
   // ─── INIT ───────────────────────────────────────────────
+  loadSettings();
   loadStats();
+
+  ['lvl-1','lvl-2','lvl-3'].forEach((id) => {
+    document.getElementById(id).addEventListener('change', () => {
+      saveSettings();
+    });
+  });
+
   nextQuestion();
 </script>
 </body>
