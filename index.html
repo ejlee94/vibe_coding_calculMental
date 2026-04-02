@@ -7,18 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --blue: #2563EB;
-    --blue-light: #DBEAFE;
-    --green: #16A34A;
-    --green-light: #DCFCE7;
-    --red: #DC2626;
-    --red-light: #FEE2E2;
+    --blue: #2563EB; --blue-light: #DBEAFE;
+    --green: #16A34A; --green-light: #DCFCE7;
+    --red: #DC2626; --red-light: #FEE2E2;
     --orange: #EA580C;
-    --text: #111827;
-    --muted: #6B7280;
-    --border: #E5E7EB;
-    --bg: #FFFFFF;
-    --radius: 16px;
+    --text: #111827; --muted: #6B7280; --border: #E5E7EB;
+    --bg: #FFFFFF; --radius: 16px;
     --shadow: 0 4px 24px rgba(0,0,0,0.08);
   }
 
@@ -36,397 +30,355 @@
     color: var(--text);
   }
 
-  .card {
-    background: var(--bg);
-    border-radius: 28px;
-    box-shadow: var(--shadow);
-    padding: 40px 44px;
-    width: 100%;
-    max-width: 480px;
+  /* ── MODALS ──────────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.52);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-box {
+    background: #fff; border-radius: 24px;
+    padding: 36px 32px; max-width: 440px; width: 100%;
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { transform: scale(0.92) translateY(12px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; font-size: 20px;
+    cursor: pointer; color: var(--muted);
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: background 0.15s, color 0.15s;
+  }
+  .modal-close:hover { background: #F3F4F6; color: var(--text); }
+
+  .modal-icon { font-size: 40px; text-align: center; margin-bottom: 10px; }
+
+  .modal-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 22px; font-weight: 800;
+    text-align: center; color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  /* ── LANGUAGE MODAL ──────────────────────────────────────── */
+  .lang-hint {
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    text-align: center; margin-bottom: 24px;
+  }
+
+  .flag-grid {
+    display: flex; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+
+  .flag-btn {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; padding: 18px 20px; min-width: 96px;
+    background: #F9FAFB; border: 2px solid var(--border);
+    border-radius: 18px; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 800; color: var(--text);
+    transition: all 0.2s;
+  }
+
+  .flag-btn:hover {
+    border-color: var(--blue); background: var(--blue-light);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(37,99,235,0.2);
+  }
+
+  .flag-btn .flag { font-size: 40px; line-height: 1; }
+
+  /* ── EXPLAIN MODAL ───────────────────────────────────────── */
+  .exp-body {
+    font-size: 14px; line-height: 1.75; color: #374151;
+    margin-bottom: 24px;
+  }
+
+  .btn-start {
+    width: 100%; height: 52px;
+    background: linear-gradient(135deg, var(--blue), #7C3AED);
+    color: #fff; border: none; border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px; font-weight: 800;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+  }
+
+  /* ── PAUSE OVERLAY ───────────────────────────────────────── */
+  #pause-overlay {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; border-radius: 28px; z-index: 20;
+  }
+
+  #pause-overlay.visible { display: flex; }
+
+  .pause-icon-big { font-size: 52px; }
+
+  .pause-label {
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px; font-weight: 800;
+    color: var(--text); letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  .btn-resume {
+    height: 48px; padding: 0 28px;
+    background: var(--blue); color: #fff; border: none;
+    border-radius: 12px; font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-resume:hover { background: #1D4ED8; transform: translateY(-2px); }
+
+  /* ── CARD ────────────────────────────────────────────────── */
+  .card {
+    background: var(--bg); border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 36px 40px; width: 100%; max-width: 480px;
+    position: relative; overflow: hidden;
   }
 
   .card::before {
     content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 5px;
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
     background: linear-gradient(90deg, var(--blue), #7C3AED, #EC4899);
     border-radius: 28px 28px 0 0;
   }
 
-  /* HEADER */
+  /* ── HEADER ──────────────────────────────────────────────── */
   .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; gap: 12px;
   }
 
   .title {
     font-family: 'Baloo 2', cursive;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.5px;
+    font-size: 20px; font-weight: 800;
+    color: var(--text); letter-spacing: -0.5px; flex-shrink: 0;
   }
 
   .title span { color: var(--blue); }
 
-  /* SCORE COUNTER */
-  .score-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
+  .header-right {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
   }
 
-  .score {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--blue-light);
-    border-radius: 50px;
-    padding: 6px 14px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--blue);
+  .score-pill {
+    display: flex; align-items: center;
+    background: var(--blue-light); border-radius: 50px;
+    padding: 5px 12px; font-size: 13px; font-weight: 700;
+    color: var(--blue); white-space: nowrap;
   }
 
-  .score-icon { font-size: 16px; }
-
-  .points {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--blue-light);
-    border-radius: 50px;
-    padding: 6px 14px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--blue);
-    letter-spacing: 0.2px;
+  .pts-label {
+    font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap;
   }
 
-  /* LEVELS */
-  .levels {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin: 0 0 14px 0;
+  /* ── TIMER ───────────────────────────────────────────────── */
+  .timer-section { margin-bottom: 22px; }
+
+  .timer-top {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 6px; gap: 8px;
   }
 
-  .level-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border: 2px solid var(--border);
-    border-radius: 999px;
-    background: #fff;
-    cursor: pointer;
-    user-select: none;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--text);
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  }
+  .timer-text { font-size: 13px; font-weight: 600; color: var(--muted); }
 
-  .level-chip input {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--blue);
-  }
-
-  .level-chip:hover {
-    border-color: #BFDBFE;
-    background: #F8FAFF;
-  }
-
-  .level-chip:has(input:focus-visible) {
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
-    border-color: var(--blue);
-  }
-
-  /* TIMER */
-  .timer-section {
-    margin-bottom: 28px;
-  }
-
-  .timer-bar-wrap {
-    background: #F3F4F6;
-    border-radius: 50px;
-    height: 14px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .timer-bar {
-    height: 100%;
-    border-radius: 50px;
-    background: linear-gradient(90deg, var(--blue), #7C3AED);
-    transition: width 1s linear, background 0.3s;
-    width: 100%;
-  }
-
-  .timer-bar.warning {
-    background: linear-gradient(90deg, var(--orange), #DC2626);
-  }
-
-  .timer-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-  }
+  .timer-right { display: flex; align-items: center; gap: 8px; }
 
   .timer-seconds {
-    font-weight: 800;
-    font-size: 15px;
-    color: var(--text);
-    transition: color 0.3s;
+    font-weight: 800; font-size: 14px;
+    color: var(--text); transition: color 0.3s;
   }
 
   .timer-seconds.urgent { color: var(--red); }
 
-  /* FORMULA */
+  .btn-pause {
+    height: 28px; padding: 0 10px;
+    background: #F3F4F6; border: 1.5px solid var(--border);
+    border-radius: 8px; font-family: 'Nunito', sans-serif;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+
+  .btn-pause:hover { background: #E5E7EB; color: var(--text); }
+  .btn-pause:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .timer-bar-wrap {
+    background: #F3F4F6; border-radius: 50px;
+    height: 12px; overflow: hidden;
+  }
+
+  .timer-bar {
+    height: 100%; border-radius: 50px;
+    background: linear-gradient(90deg, var(--blue), #7C3AED);
+    transition: width 1s linear, background 0.3s; width: 100%;
+  }
+
+  .timer-bar.warning { background: linear-gradient(90deg, var(--orange), #DC2626); }
+
+  /* ── FORMULA ─────────────────────────────────────────────── */
   .formula-section {
-    text-align: center;
-    margin-bottom: 28px;
-    padding: 28px 20px;
-    background: #F9FAFB;
-    border-radius: var(--radius);
+    text-align: center; margin-bottom: 22px;
+    padding: 22px 20px;
+    background: #F9FAFB; border-radius: var(--radius);
     border: 2px dashed var(--border);
   }
 
   .formula-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-    text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 10px;
   }
 
   .question-num {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0;
-    flex: 1;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
   }
 
   .level-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--text);
-    white-space: nowrap;
+    display: inline-flex; align-items: center;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 900; letter-spacing: 0.4px;
+    text-transform: uppercase; border: 1px solid var(--border);
+    background: #fff; color: var(--text); white-space: nowrap;
   }
 
-  .level-badge.lvl-1 { background: #ECFDF5; border-color: #BBF7D0; color: #166534; }
-  .level-badge.lvl-2 { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
-  .level-badge.lvl-3 { background: #FFF7ED; border-color: #FED7AA; color: #9A3412; }
+  .level-badge.lvl-1 { background:#ECFDF5; border-color:#BBF7D0; color:#166534; }
+  .level-badge.lvl-2 { background:#EFF6FF; border-color:#BFDBFE; color:#1D4ED8; }
+  .level-badge.lvl-3 { background:#FFF7ED; border-color:#FED7AA; color:#9A3412; }
+  .level-badge.lvl-4 { background:#FDF4FF; border-color:#E9D5FF; color:#6B21A8; }
+  .level-badge.lvl-5 { background:#FFF1F2; border-color:#FECDD3; color:#9F1239; }
 
   .formula {
     font-family: 'Baloo 2', cursive;
-    font-size: 52px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -1px;
-    line-height: 1;
-    transition: transform 0.3s, opacity 0.3s;
+    font-size: 52px; font-weight: 800; color: var(--text);
+    letter-spacing: -1px; line-height: 1;
   }
 
-  .formula.shake {
-    animation: shake 0.4s ease;
-  }
+  .formula.shake { animation: shake 0.4s ease; }
+  .formula.pop   { animation: pop 0.3s ease; }
 
-  .formula.pop {
-    animation: pop 0.3s ease;
-  }
-
-  /* OPERATOR COLORS */
   .op-plus  { color: var(--green); }
   .op-minus { color: var(--blue); }
   .op-times { color: #7C3AED; }
   .op-div   { color: var(--orange); }
 
-  /* INPUT */
-  .input-section {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+  /* ── INPUT ───────────────────────────────────────────────── */
+  .input-section { display: flex; gap: 12px; margin-bottom: 14px; }
 
   .answer-input {
-    flex: 1;
-    height: 56px;
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 26px;
-    font-weight: 700;
-    text-align: center;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    flex: 1; height: 56px; border: 2px solid var(--border);
+    border-radius: 14px; font-family: 'Baloo 2', cursive;
+    font-size: 26px; font-weight: 700; text-align: center; color: var(--text);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     -moz-appearance: textfield;
   }
 
   .answer-input::-webkit-inner-spin-button,
   .answer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-  .answer-input:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
-  }
-
-  .answer-input.correct {
-    border-color: var(--green);
-    box-shadow: 0 0 0 4px rgba(22,163,74,0.12);
-    background: var(--green-light);
-  }
-
-  .answer-input.wrong {
-    border-color: var(--red);
-    box-shadow: 0 0 0 4px rgba(220,38,38,0.12);
-    background: var(--red-light);
-  }
+  .answer-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+  .answer-input.correct { border-color: var(--green); box-shadow: 0 0 0 4px rgba(22,163,74,0.12); background: var(--green-light); }
+  .answer-input.wrong   { border-color: var(--red);   box-shadow: 0 0 0 4px rgba(220,38,38,0.12);  background: var(--red-light); }
 
   .btn-verify {
-    height: 56px;
-    padding: 0 24px;
-    background: var(--blue);
-    color: white;
-    border: none;
-    border-radius: 14px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
+    height: 56px; padding: 0 22px;
+    background: var(--blue); color: #fff; border: none;
+    border-radius: 14px; font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800; cursor: pointer; white-space: nowrap;
     transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
   }
 
-  .btn-verify:hover:not(:disabled) {
-    background: #1D4ED8;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37,99,235,0.3);
-  }
-
+  .btn-verify:hover:not(:disabled) { background: #1D4ED8; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
   .btn-verify:active:not(:disabled) { transform: scale(0.97); }
   .btn-verify:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* FEEDBACK */
+  /* ── FEEDBACK ────────────────────────────────────────────── */
   .feedback {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 10px 16px;
-    transition: all 0.3s;
-    opacity: 0;
-    transform: translateY(4px);
+    min-height: 44px; display: flex; align-items: center; justify-content: center;
+    gap: 8px; border-radius: 12px; font-size: 14px; font-weight: 700;
+    padding: 8px 16px; text-align: center;
+    transition: all 0.3s; opacity: 0; transform: translateY(4px);
   }
 
-  .feedback.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .feedback.show         { opacity: 1; transform: translateY(0); }
+  .feedback.correct-fb   { background: var(--green-light); color: var(--green); }
+  .feedback.wrong-fb     { background: var(--red-light);   color: var(--red); }
+  .feedback.timeout-fb   { background: #FFF7ED; color: var(--orange); }
 
-  .feedback.correct-fb {
-    background: var(--green-light);
-    color: var(--green);
-  }
-
-  .feedback.wrong-fb {
-    background: var(--red-light);
-    color: var(--red);
-  }
-
-  .feedback.timeout-fb {
-    background: #FFF7ED;
-    color: var(--orange);
-  }
-
-  /* NEXT BUTTON */
+  /* ── NEXT BUTTON ─────────────────────────────────────────── */
   .btn-next {
-    width: 100%;
-    height: 48px;
-    margin-top: 12px;
-    background: transparent;
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    width: 100%; height: 46px; margin-top: 10px;
+    background: transparent; border: 2px solid var(--border);
+    border-radius: 12px; font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 700; color: var(--muted);
+    cursor: pointer; transition: all 0.2s; display: none;
+  }
+
+  .btn-next.visible { display: block; }
+  .btn-next:hover   { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+  /* ── FOOTER HINT ─────────────────────────────────────────── */
+  .footer-hint { margin-top: 16px; text-align: center; font-size: 11px; color: #D1D5DB; }
+
+  /* ── RESULTS ─────────────────────────────────────────────── */
+  #results-section { display: none; text-align: center; padding: 12px 0 4px; }
+
+  .results-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 30px; font-weight: 800; color: var(--text); margin-bottom: 10px;
+  }
+
+  .results-msg { font-size: 15px; line-height: 1.65; color: #374151; margin-bottom: 24px; }
+
+  .results-stats { display: flex; gap: 14px; margin-bottom: 24px; }
+
+  .stat-box {
+    flex: 1; background: #F9FAFB; border: 2px solid var(--border);
+    border-radius: 16px; padding: 16px 10px; text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Baloo 2', cursive;
+    font-size: 28px; font-weight: 800; color: var(--blue);
+    line-height: 1; margin-bottom: 5px;
+  }
+
+  .stat-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+
+  .btn-play-again {
+    width: 100%; height: 52px;
+    background: linear-gradient(135deg, var(--blue), #7C3AED);
+    color: #fff; border: none; border-radius: 14px;
     font-family: 'Nunito', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: none;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
 
-  .btn-next.visible {
-    display: block;
-  }
+  .btn-play-again:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.35); }
 
-  .btn-next:hover {
-    border-color: var(--blue);
-    color: var(--blue);
-    background: var(--blue-light);
-  }
-
-  /* RESET BUTTON */
-  .btn-reset {
-    width: 100%;
-    height: 44px;
-    margin-top: 10px;
-    background: transparent;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-reset:hover {
-    border-color: var(--red);
-    color: var(--red);
-    background: var(--red-light);
-  }
-
-  /* FOOTER */
-  .footer {
-    margin-top: 28px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* ANIMATIONS */
+  /* ── ANIMATIONS ──────────────────────────────────────────── */
   @keyframes shake {
     0%,100% { transform: translateX(0); }
     20% { transform: translateX(-8px); }
@@ -436,498 +388,545 @@
   }
 
   @keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.08); }
     100% { transform: scale(1); }
   }
 
   @keyframes confetti-fall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(80px) rotate(360deg); opacity: 0; }
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(80px)  rotate(360deg); opacity: 0; }
   }
 
   .confetti-piece {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    pointer-events: none;
-    animation: confetti-fall 0.8s ease forwards;
+    position: absolute; width: 8px; height: 8px; border-radius: 2px;
+    pointer-events: none; animation: confetti-fall 0.8s ease forwards;
   }
 
-  /* RESPONSIVE */
-  @media (max-width: 400px) {
-    .card { padding: 28px 20px; }
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 420px) {
+    .card { padding: 26px 18px; }
     .formula { font-size: 40px; }
     .input-section { flex-direction: column; }
     .btn-verify { height: 48px; }
     .answer-input { height: 48px; }
+    .results-stats { flex-direction: column; }
   }
 </style>
 </head>
 <body>
 
-<div class="card" id="app">
-  <!-- Header -->
-  <div class="header">
-    <div class="title">Calcul <span>Mental</span> 🧠</div>
-    <div class="score-wrap">
-      <div class="score">
-        <span id="score-display">✅ 0 /❓ 0</span>
-      </div>
-      <div class="points" id="points-display">Score : 0 point</div>
+<!-- ─── LANGUAGE MODAL ──────────────────────────────────────── -->
+<div id="lang-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-icon">🌍</div>
+    <div class="lang-hint">Choisissez / Choose / 선택하세요</div>
+    <div class="flag-grid">
+      <button class="flag-btn" onclick="selectLang('ko')">
+        <span class="flag">🇰🇷</span><span>한국어</span>
+      </button>
+      <button class="flag-btn" onclick="selectLang('fr')">
+        <span class="flag">🇫🇷</span><span>Français</span>
+      </button>
+      <button class="flag-btn" onclick="selectLang('en')">
+        <span class="flag">🇬🇧</span><span>English</span>
+      </button>
     </div>
   </div>
-
-  <!-- Levels -->
-  <div class="levels" aria-label="Sélection des niveaux">
-    <label class="level-chip">
-      <input type="checkbox" id="lvl-1" checked />
-      Niveau 1 (1 pt)
-    </label>
-    <label class="level-chip">
-      <input type="checkbox" id="lvl-2" checked />
-      Niveau 2 (2 pts)
-    </label>
-    <label class="level-chip">
-      <input type="checkbox" id="lvl-3" checked />
-      Niveau 3 (3 pts)
-    </label>
-  </div>
-
-  <!-- Timer -->
-  <div class="timer-section">
-    <div class="timer-label">
-      <span>⏳ Temps restant</span>
-      <span class="timer-seconds" id="timer-seconds">30s</span>
-    </div>
-    <div class="timer-bar-wrap">
-      <div class="timer-bar" id="timer-bar"></div>
-    </div>
-  </div>
-
-  <!-- Formula -->
-  <div class="formula-section">
-    <div class="formula-top">
-      <div class="question-num" id="question-num">Question —</div>
-      <div class="level-badge lvl-1" id="level-badge">Niveau 1 · +1</div>
-    </div>
-    <div class="formula" id="formula">Prêt·e ?</div>
-  </div>
-
-  <!-- Input + Button -->
-  <div class="input-section">
-    <input
-      class="answer-input"
-      type="number"
-      id="answer-input"
-      placeholder="?"
-      inputmode="numeric"
-      autocomplete="off"
-    />
-    <button class="btn-verify" id="btn-verify" onclick="verify()">
-      Vérifier ✓
-    </button>
-  </div>
-
-  <!-- Feedback message -->
-  <div class="feedback" id="feedback"></div>
-
-  <!-- Next button -->
-  <button class="btn-next" id="btn-next" onclick="nextQuestion()">
-    Question suivante →
-  </button>
-
-  <div class="footer">Appuie sur <strong>Entrée</strong> pour vérifier · <strong>→</strong> pour passer</div>
-  <button class="btn-reset" id="btn-reset" onclick="resetStats()">
-    Reset
-  </button>
 </div>
 
+<!-- ─── EXPLANATION MODAL ───────────────────────────────────── -->
+<div id="exp-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" id="exp-close" onclick="closeExp()">✕</button>
+    <div class="modal-title" id="exp-title">Bienvenue !</div>
+    <div class="exp-body" id="exp-body"></div>
+    <button class="btn-start" id="exp-start" onclick="closeExp()">Démarrer 🚀</button>
+  </div>
+</div>
+
+<!-- ─── GAME CARD ───────────────────────────────────────────── -->
+<div class="card" id="app">
+
+  <!-- Pause overlay (inside card) -->
+  <div id="pause-overlay">
+    <div class="pause-icon-big">⏸</div>
+    <div class="pause-label" id="pause-label">JEU EN PAUSE</div>
+    <button class="btn-resume" id="btn-resume" onclick="resumeGame()">Reprendre la partie</button>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="title" id="game-title">Calcul <span>Mental</span> 🧠</div>
+    <div class="header-right">
+      <div class="score-pill"><span id="score-display">✅ 0 / ❓ 0</span></div>
+      <div class="pts-label" id="pts-display">Score : 0 pt</div>
+    </div>
+  </div>
+
+  <!-- ── GAME SECTION ───────────────────────────────────────── -->
+  <div id="game-section">
+
+    <!-- Timer -->
+    <div class="timer-section">
+      <div class="timer-top">
+        <span class="timer-text" id="timer-label">⏳ Temps restant</span>
+        <div class="timer-right">
+          <span class="timer-seconds" id="timer-seconds">30s</span>
+          <button class="btn-pause" id="btn-pause" onclick="pauseGame()">Pause ⏸</button>
+        </div>
+      </div>
+      <div class="timer-bar-wrap">
+        <div class="timer-bar" id="timer-bar"></div>
+      </div>
+    </div>
+
+    <!-- Formula -->
+    <div class="formula-section">
+      <div class="formula-top">
+        <div class="question-num" id="question-num">—</div>
+        <div class="level-badge lvl-1" id="level-badge">Niveau 1 · +1</div>
+      </div>
+      <div class="formula" id="formula">…</div>
+    </div>
+
+    <!-- Input + Verify -->
+    <div class="input-section">
+      <input class="answer-input" type="number" id="answer-input"
+             placeholder="?" inputmode="numeric" autocomplete="off" />
+      <button class="btn-verify" id="btn-verify" onclick="verify()">Vérifier ✓</button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback" id="feedback"></div>
+
+    <!-- Next -->
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Continuer →</button>
+
+    <!-- Footer -->
+    <div class="footer-hint" id="footer-hint">
+      Appuie sur <strong>Entrée</strong> pour vérifier · <strong>→</strong> pour passer
+    </div>
+
+  </div><!-- #game-section -->
+
+  <!-- ── RESULTS SECTION ────────────────────────────────────── -->
+  <div id="results-section">
+    <div class="results-title" id="results-title">Bravo ! 🎉</div>
+    <div class="results-msg" id="results-msg"></div>
+    <div class="results-stats">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-correct">0</div>
+        <div class="stat-label" id="stat-correct-lbl">Bonnes réponses</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-score">0</div>
+        <div class="stat-label" id="stat-score-lbl">Score total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">60</div>
+        <div class="stat-label" id="stat-max-lbl">Score max</div>
+      </div>
+    </div>
+    <button class="btn-play-again" id="btn-play-again" onclick="playAgain()">
+      Une autre partie 🔄
+    </button>
+  </div><!-- #results-section -->
+
+</div><!-- #app -->
+
 <script>
-  // ─── STATE ──────────────────────────────────────────────
-  const DURATION = 30;
-  let goodAnswers = 0;
-  let totalTests  = 0;
-  let points = 0;
-  let currentAnswer = 0;
-  let currentLevel = 1;
-  let timerInterval = null;
-  let timeLeft = DURATION;
-  let answered = false;
-  let questionCount = 0;
+// ─── TRANSLATIONS ────────────────────────────────────────────
+const T = {
+  fr: {
+    title: ['Calcul ', 'Mental', ' 🧠'],
+    welcomeTitle: 'Bienvenue !',
+    welcomeBody: `Vous allez démarrer un jeu de <strong>calcul mental</strong> !
+      Ce jeu est composé de <strong>20 questions</strong> en tout (5 niveaux 😉).<br><br>
+      Vous verrez des questions comme <strong>7 + 3 ?</strong> — répondez, puis cliquez
+      <strong>Vérifier</strong>. Pour continuer, cliquez <strong>Continuer</strong>.
+      Chaque bonne réponse rapporte de 1 à 5 points selon le niveau.
+      La question est chronométrée.<br><br>Êtes-vous prêt(e) ? C'est parti !`,
+    startBtn: 'Démarrer 🚀',
+    verifyBtn: 'Vérifier ✓',
+    nextBtn: 'Continuer →',
+    pauseBtn: 'Pause ⏸',
+    resumeBtn: 'Reprendre ▶',
+    timerLabel: '⏳ Temps restant',
+    level: 'Niveau', question: 'Question',
+    scorePrefix: 'Score :',
+    footerHint: 'Appuie sur <strong>Entrée</strong> pour vérifier · <strong>→</strong> pour passer',
+    resultsTitle: 'Bravo ! 🎉',
+    resultsMsg: (c, s) => `Tu as répondu correctement à <strong>${c} / 20</strong> questions
+      et obtenu <strong>${s} / 60</strong> points !`,
+    correctLbl: 'Bonnes réponses', scoreLbl: 'Score total', maxLbl: 'Score max',
+    playAgain: 'Une autre partie 🔄',
+    pauseLabel: 'JEU EN PAUSE', pauseResume: 'Reprendre la partie',
+    timeoutMsg: (a) => `⏰ Temps écoulé ! La réponse était <strong>${a}</strong>`,
+    wrongSuffix: (a) => `La réponse était <strong>${a}</strong>`,
+    correctMsgs: ['🎉 Bravo, bonne réponse !','⚡ Excellent, tu déchires !','🌟 Parfait !','🦄 Génial !','🔥 Super !','👏 Bien joué !'],
+    wrongMsgs: ['🤔 Pas tout à fait !','😅 Aïe !','🫣 Presque, mais non !','🙈 Oups !','💪 Raté !'],
+  },
+  en: {
+    title: ['Mental ', 'Math', ' 🧠'],
+    welcomeTitle: 'Welcome!',
+    welcomeBody: `You're about to start a <strong>mental math</strong> game!
+      It has <strong>20 questions</strong> in total (5 levels 😉).<br><br>
+      You'll see questions like <strong>7 + 3 ?</strong> — type the answer and click
+      <strong>Check</strong>. To continue, click <strong>Continue</strong>.
+      Each correct answer earns 1–5 points by level. Each question is timed.<br><br>
+      Are you ready? Let's go!`,
+    startBtn: 'Start 🚀',
+    verifyBtn: 'Check ✓',
+    nextBtn: 'Continue →',
+    pauseBtn: 'Pause ⏸',
+    resumeBtn: 'Resume ▶',
+    timerLabel: '⏳ Time left',
+    level: 'Level', question: 'Question',
+    scorePrefix: 'Score:',
+    footerHint: 'Press <strong>Enter</strong> to check · <strong>→</strong> to continue',
+    resultsTitle: 'Well done! 🎉',
+    resultsMsg: (c, s) => `You answered <strong>${c} / 20</strong> questions correctly
+      and earned <strong>${s} / 60</strong> points!`,
+    correctLbl: 'Correct answers', scoreLbl: 'Total score', maxLbl: 'Max score',
+    playAgain: 'Play again 🔄',
+    pauseLabel: 'GAME PAUSED', pauseResume: 'Resume game',
+    timeoutMsg: (a) => `⏰ Time's up! The answer was <strong>${a}</strong>`,
+    wrongSuffix: (a) => `The answer was <strong>${a}</strong>`,
+    correctMsgs: ['🎉 Correct!','⚡ Excellent!','🌟 Perfect!','🦄 Amazing!','🔥 Awesome!','👏 Well done!'],
+    wrongMsgs: ['🤔 Not quite!','😅 Oops!','🫣 Almost, but no!','🙈 Try again!','💪 Missed it!'],
+  },
+  ko: {
+    title: ['암산 ', '게임', ' 🧠'],
+    welcomeTitle: '환영합니다!',
+    welcomeBody: `<strong>암산 게임</strong>을 시작합니다!
+      총 <strong>20문제</strong> (5단계 😉)로 구성되어 있습니다.<br><br>
+      <strong>7 + 3 ?</strong> 같은 문제에 답을 입력하고 <strong>확인</strong>을 클릭하세요.
+      계속하려면 <strong>계속</strong>을 클릭하세요.
+      정답은 단계에 따라 1~5점입니다. 각 문제는 시간 제한이 있습니다.<br><br>
+      준비되셨나요? 시작합니다!`,
+    startBtn: '시작 🚀',
+    verifyBtn: '확인 ✓',
+    nextBtn: '계속 →',
+    pauseBtn: '일시정지 ⏸',
+    resumeBtn: '재개 ▶',
+    timerLabel: '⏳ 남은 시간',
+    level: '단계', question: '문제',
+    scorePrefix: '점수:',
+    footerHint: '<strong>Enter</strong>로 확인 · <strong>→</strong>로 계속',
+    resultsTitle: '잘 했어요! 🎉',
+    resultsMsg: (c, s) => `<strong>${c} / 20</strong>문제를 맞추고 <strong>${s} / 60</strong>점을 획득했습니다!`,
+    correctLbl: '정답 수', scoreLbl: '총 점수', maxLbl: '최고 점수',
+    playAgain: '다시 하기 🔄',
+    pauseLabel: '일시 정지', pauseResume: '게임 재개',
+    timeoutMsg: (a) => `⏰ 시간 초과! 정답은 <strong>${a}</strong>`,
+    wrongSuffix: (a) => `정답은 <strong>${a}</strong>`,
+    correctMsgs: ['🎉 정답!','⚡ 훌륭해요!','🌟 완벽해요!','🦄 대단해요!','🔥 최고!','👏 잘했어요!'],
+    wrongMsgs: ['🤔 아쉬워요!','😅 아이고!','🫣 거의 맞았어요!','🙈 이런!','💪 다시 도전!'],
+  },
+};
 
-  // Load today's stats from localStorage
-  function loadStats() {
-    const today = new Date().toDateString();
-    const saved = JSON.parse(localStorage.getItem('calcul-mental') || '{}');
-    if (saved.date === today) {
-      goodAnswers = saved.good || 0;
-      totalTests  = saved.total || 0;
-      points      = saved.points || 0;
-    } else {
-      goodAnswers = 0;
-      totalTests  = 0;
-      points      = 0;
-    }
-    updateScore();
+// ─── LEVEL CONFIG ────────────────────────────────────────────
+const LEVELS = [
+  { level: 1, aMin:  1, aMax:  9, bMin: 1, bMax: 9, points: 1 },
+  { level: 2, aMin: 10, aMax: 19, bMin: 1, bMax: 9, points: 2 },
+  { level: 3, aMin: 20, aMax: 29, bMin: 1, bMax: 9, points: 3 },
+  { level: 4, aMin: 30, aMax: 39, bMin: 1, bMax: 9, points: 4 },
+  { level: 5, aMin: 40, aMax: 99, bMin: 1, bMax: 9, points: 5 },
+];
+
+// ─── STATE ───────────────────────────────────────────────────
+let lang = 'fr';
+let questions = [];
+let currentIdx = 0;
+let totalCorrect = 0;
+let totalScore = 0;
+let currentAnswer = 0;
+let timeLeft = 30;
+let timerInterval = null;
+let answered = false;
+let paused = false;
+
+// ─── UTILITIES ───────────────────────────────────────────────
+function rand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = rand(0, i);
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
 
-  function saveStats() {
-    const today = new Date().toDateString();
-    localStorage.setItem('calcul-mental', JSON.stringify({
-      date: today,
-      good: goodAnswers,
-      total: totalTests
-      ,points
-    }));
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const OP_CLASS = { '+': 'op-plus', '-': 'op-minus', '×': 'op-times', '÷': 'op-div' };
+
+// ─── QUESTION BUILDERS ───────────────────────────────────────
+function buildAdd(cfg) {
+  const a = rand(cfg.aMin, cfg.aMax), b = rand(cfg.bMin, cfg.bMax);
+  return { a, b, op: '+', answer: a + b };
+}
+
+function buildSub(cfg) {
+  let a, b;
+  do { a = rand(cfg.aMin, cfg.aMax); b = rand(cfg.bMin, cfg.bMax); } while (a <= b);
+  return { a, b, op: '-', answer: a - b };
+}
+
+function buildMul(cfg) {
+  const a = rand(cfg.aMin, cfg.aMax), b = rand(cfg.bMin, cfg.bMax);
+  return { a, b, op: '×', answer: a * b };
+}
+
+function buildDiv(cfg) {
+  let a, b, q;
+  for (;;) {
+    b = rand(cfg.bMin, cfg.bMax);
+    const qMin = Math.ceil(cfg.aMin / b), qMax = Math.floor(cfg.aMax / b);
+    if (qMax < qMin || qMin < 1) continue;
+    q = rand(Math.max(1, qMin), qMax);
+    a = b * q;
+    if (a >= cfg.aMin && a <= cfg.aMax) break;
   }
+  return { a, b, op: '÷', answer: q };
+}
 
-  function resetStats() {
-    stopTimer();
-    goodAnswers = 0;
-    totalTests = 0;
-    points = 0;
-    questionCount = 0;
-    answered = false;
-    saveStats();
-    updateScore();
-    nextQuestion();
-  }
+// ─── QUESTION GENERATION ─────────────────────────────────────
+function buildLevelQuestions(cfg) {
+  const builders = shuffle([buildAdd, buildSub, buildMul, buildDiv]);
+  return builders.map((fn, i) => ({
+    ...fn(cfg),
+    level: cfg.level,
+    points: cfg.points,
+    qInLevel: i + 1,
+  }));
+}
 
-  function loadSettings() {
-    const saved = JSON.parse(localStorage.getItem('calcul-mental-settings') || '{}');
-    const levels = Array.isArray(saved.levels) ? saved.levels : [1, 2, 3];
-    document.getElementById('lvl-1').checked = levels.includes(1);
-    document.getElementById('lvl-2').checked = levels.includes(2);
-    document.getElementById('lvl-3').checked = levels.includes(3);
-  }
+function generateAllQuestions() {
+  return LEVELS.flatMap(cfg => buildLevelQuestions(cfg));
+}
 
-  function saveSettings() {
-    localStorage.setItem('calcul-mental-settings', JSON.stringify({
-      levels: getSelectedLevels()
-    }));
-  }
-
-  function getSelectedLevels() {
-    const lvls = [];
-    if (document.getElementById('lvl-1').checked) lvls.push(1);
-    if (document.getElementById('lvl-2').checked) lvls.push(2);
-    if (document.getElementById('lvl-3').checked) lvls.push(3);
-    return lvls.length ? lvls : [1, 2, 3];
-  }
-
-  function updateScore() {
-    const s = (n) => (n === 1 ? '' : 's');
-    document.getElementById('score-display').textContent =
-      `✅ ${goodAnswers} / ❓ ${totalTests}`;
-    document.getElementById('points-display').textContent =
-      `Score : ${points} point${s(points)}`;
-  }
-
-  // ─── QUESTION GENERATION ────────────────────────────────
-  function levelLabel(level) {
-    return `Niveau ${level}`;
-  }
-
-  function updateLevelBadge(level) {
-    const el = document.getElementById('level-badge');
-    el.classList.remove('lvl-1', 'lvl-2', 'lvl-3');
-    el.classList.add(`lvl-${level}`);
-    el.textContent = `${levelLabel(level)} · +${level}`;
-  }
-
-  function pickLevel() {
-    const lvls = getSelectedLevels();
-    return lvls[Math.floor(Math.random() * lvls.length)];
-  }
-
-  function pickOperandsForLevel(level) {
-    // Constraints requested:
-    // - Niveau 1: 1..9 and 1..9
-    // - Niveau 2: 10..99 and 1..9 (either order)
-    // - Niveau 3: 10..99 and 10..99
-    if (level === 1) return { aMin: 1, aMax: 9, bMin: 1, bMax: 9 };
-    if (level === 2) {
-      const twoDigitsFirst = Math.random() < 0.5;
-      return twoDigitsFirst
-        ? { aMin: 10, aMax: 99, bMin: 1, bMax: 9 }
-        : { aMin: 1, aMax: 9, bMin: 10, bMax: 99 };
-    }
-    return { aMin: 10, aMax: 99, bMin: 10, bMax: 99 };
-  }
-
-  function generateQuestion(level) {
-    const ops = ['+', '-', '×', '÷'];
-    const op  = ops[Math.floor(Math.random() * ops.length)];
-    let a, b, answer;
-    const { aMin, aMax, bMin, bMax } = pickOperandsForLevel(level);
-
-    if (op === '+') {
-      a = rand(aMin, aMax);
-      b = rand(bMin, bMax);
-      answer = a + b;
-    } else if (op === '-') {
-      a = rand(aMin, aMax);
-      b = rand(bMin, bMax);
-      if (b > a) [a, b] = [b, a];
-      answer = a - b;
-    } else if (op === '×') {
-      a = rand(aMin, aMax);
-      b = rand(bMin, bMax);
-      answer = a * b;
-    } else { // ÷ (always exact)
-      // Build (a = b * q) ensuring:
-      // - a is within [aMin..aMax]
-      // - b is within [bMin..bMax]
-      // - q is an integer
-      // Retry until constraints satisfied.
-      for (;;) {
-        b = rand(bMin, bMax);
-        if (b === 0) continue;
-        const qMin = Math.ceil(aMin / b);
-        const qMax = Math.floor(aMax / b);
-        if (qMax < qMin) continue;
-        const q = rand(Math.max(1, qMin), Math.max(1, qMax));
-        a = b * q;
-        if (a < aMin || a > aMax) continue;
-        answer = a / b;
-        break;
-      }
-    }
-
-    return { a, b, op, answer };
-  }
-
-  function rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  function opClass(op) {
-    return { '+': 'op-plus', '-': 'op-minus', '×': 'op-times', '÷': 'op-div' }[op] || '';
-  }
-
-  // ─── TIMER ──────────────────────────────────────────────
-  function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = DURATION;
+// ─── TIMER ───────────────────────────────────────────────────
+function runTimer() {
+  timerInterval = setInterval(() => {
+    timeLeft--;
     updateTimerUI();
+    if (timeLeft <= 0) { clearInterval(timerInterval); onTimeout(); }
+  }, 1000);
+}
 
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateTimerUI();
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        onTimeout();
-      }
-    }, 1000);
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+  updateTimerUI();
+  runTimer();
+}
+
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+
+function updateTimerUI() {
+  const bar = document.getElementById('timer-bar');
+  const lbl = document.getElementById('timer-seconds');
+  bar.style.width = (timeLeft / 30 * 100) + '%';
+  lbl.textContent = timeLeft + 's';
+  bar.classList.toggle('warning', timeLeft <= 8);
+  lbl.classList.toggle('urgent', timeLeft <= 8);
+}
+
+// ─── LANGUAGE & MODALS ───────────────────────────────────────
+function selectLang(selected) {
+  lang = selected;
+  document.getElementById('lang-modal').style.display = 'none';
+  applyTranslations();
+  openExp();
+}
+
+function applyTranslations() {
+  const t = T[lang];
+  const titleEl = document.getElementById('game-title');
+  titleEl.innerHTML = `${t.title[0]}<span>${t.title[1]}</span>${t.title[2]}`;
+  document.getElementById('timer-label').textContent = t.timerLabel;
+  document.getElementById('btn-pause').textContent = t.pauseBtn;
+  document.getElementById('btn-verify').textContent = t.verifyBtn;
+  document.getElementById('btn-next').textContent = t.nextBtn;
+  document.getElementById('footer-hint').innerHTML = t.footerHint;
+  document.getElementById('stat-correct-lbl').textContent = t.correctLbl;
+  document.getElementById('stat-score-lbl').textContent = t.scoreLbl;
+  document.getElementById('stat-max-lbl').textContent = t.maxLbl;
+  document.getElementById('btn-play-again').textContent = t.playAgain;
+  document.getElementById('pause-label').textContent = t.pauseLabel;
+  document.getElementById('btn-resume').textContent = t.pauseResume;
+}
+
+function openExp() {
+  const t = T[lang];
+  document.getElementById('exp-title').textContent = t.welcomeTitle;
+  document.getElementById('exp-body').innerHTML = t.welcomeBody;
+  document.getElementById('exp-start').textContent = t.startBtn;
+  document.getElementById('exp-modal').style.display = 'flex';
+}
+
+function closeExp() {
+  document.getElementById('exp-modal').style.display = 'none';
+  startGame();
+}
+
+// ─── GAME FLOW ────────────────────────────────────────────────
+function startGame() {
+  questions = generateAllQuestions();
+  currentIdx = 0; totalCorrect = 0; totalScore = 0;
+  answered = false; paused = false;
+  document.getElementById('pause-overlay').classList.remove('visible');
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('game-section').style.display = 'block';
+  updateScoreDisplay();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (currentIdx >= questions.length) { showResults(); return; }
+  const q = questions[currentIdx];
+  currentAnswer = q.answer; answered = false;
+  const t = T[lang];
+  document.getElementById('question-num').textContent =
+    `${t.level} ${q.level} — ${t.question} ${q.qInLevel}`;
+  const badge = document.getElementById('level-badge');
+  badge.className = `level-badge lvl-${q.level}`;
+  badge.textContent = `${t.level} ${q.level} · +${q.points}`;
+  const fEl = document.getElementById('formula');
+  fEl.innerHTML = `${q.a} <span class="${OP_CLASS[q.op]}">${q.op}</span> ${q.b}`;
+  fEl.classList.remove('shake', 'pop'); void fEl.offsetWidth; fEl.classList.add('pop');
+  const inp = document.getElementById('answer-input');
+  inp.value = ''; inp.classList.remove('correct', 'wrong'); inp.disabled = false;
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('btn-verify').disabled = false;
+  document.getElementById('btn-pause').disabled = false;
+  document.getElementById('btn-next').classList.remove('visible');
+  startTimer(); inp.focus();
+}
+
+function nextQuestion() { currentIdx++; loadQuestion(); }
+
+// ─── ANSWER HANDLING ─────────────────────────────────────────
+function verify() {
+  if (answered) return;
+  const inp = document.getElementById('answer-input');
+  const val = inp.value.trim();
+  if (val === '') { inp.focus(); return; }
+  stopTimer(); answered = true;
+  const q = questions[currentIdx];
+  const isCorrect = Math.abs(parseFloat(val) - currentAnswer) < 0.01;
+  if (isCorrect) {
+    totalCorrect++; totalScore += q.points;
+    inp.classList.add('correct');
+    document.getElementById('formula').classList.add('pop');
+    spawnConfetti();
+    showFeedback('correct', pick(T[lang].correctMsgs));
+  } else {
+    inp.classList.add('wrong');
+    document.getElementById('formula').classList.add('shake');
+    const base = pick(T[lang].wrongMsgs);
+    showFeedback('wrong', `${base} ${T[lang].wrongSuffix(currentAnswer)}`);
   }
+  updateScoreDisplay();
+  document.getElementById('btn-verify').disabled = true;
+  document.getElementById('btn-pause').disabled = true;
+  document.getElementById('btn-next').classList.add('visible');
+}
 
-  function updateTimerUI() {
-    const bar = document.getElementById('timer-bar');
-    const label = document.getElementById('timer-seconds');
-    const pct = (timeLeft / DURATION) * 100;
+function onTimeout() {
+  if (answered) return;
+  answered = true;
+  const inp = document.getElementById('answer-input');
+  inp.classList.add('wrong'); inp.disabled = true;
+  document.getElementById('formula').classList.add('shake');
+  showFeedback('timeout', T[lang].timeoutMsg(currentAnswer));
+  updateScoreDisplay();
+  document.getElementById('btn-verify').disabled = true;
+  document.getElementById('btn-pause').disabled = true;
+  document.getElementById('btn-next').classList.add('visible');
+}
 
-    bar.style.width = pct + '%';
-    label.textContent = timeLeft + 's';
+// ─── PAUSE ───────────────────────────────────────────────────
+function pauseGame() {
+  if (answered) return;
+  paused = true;
+  stopTimer();
+  document.getElementById('pause-overlay').classList.add('visible');
+  document.getElementById('btn-pause').textContent = T[lang].resumeBtn;
+}
 
-    if (timeLeft <= 8) {
-      bar.classList.add('warning');
-      label.classList.add('urgent');
-    } else {
-      bar.classList.remove('warning');
-      label.classList.remove('urgent');
-    }
+function resumeGame() {
+  paused = false;
+  document.getElementById('pause-overlay').classList.remove('visible');
+  document.getElementById('btn-pause').textContent = T[lang].pauseBtn;
+  if (!answered) runTimer();
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────
+function showResults() {
+  stopTimer();
+  const t = T[lang];
+  document.getElementById('game-section').style.display = 'none';
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-title').textContent = t.resultsTitle;
+  document.getElementById('results-msg').innerHTML = t.resultsMsg(totalCorrect, totalScore);
+  document.getElementById('stat-correct').textContent = `${totalCorrect}/20`;
+  document.getElementById('stat-score').textContent = `${totalScore}/60`;
+  document.getElementById('btn-play-again').textContent = t.playAgain;
+  spawnConfetti(); setTimeout(spawnConfetti, 350);
+}
+
+function playAgain() { startGame(); }
+
+// ─── SCORE DISPLAY ───────────────────────────────────────────
+function updateScoreDisplay() {
+  const done = currentIdx + (answered ? 1 : 0);
+  document.getElementById('score-display').textContent = `✅ ${totalCorrect} / ❓ ${done}`;
+  document.getElementById('pts-display').textContent = `${T[lang].scorePrefix} ${totalScore} pts`;
+}
+
+// ─── FEEDBACK ────────────────────────────────────────────────
+function showFeedback(type, html) {
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = html; fb.className = 'feedback'; void fb.offsetWidth;
+  const cls = type === 'correct' ? 'correct-fb' : type === 'wrong' ? 'wrong-fb' : 'timeout-fb';
+  fb.classList.add(cls, 'show');
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────
+function spawnConfetti() {
+  const card = document.getElementById('app');
+  const colors = ['#2563EB','#7C3AED','#EC4899','#16A34A','#F59E0B'];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random() * 100 + '%';
+    el.style.top  = Math.random() * 40  + '%';
+    el.style.background = pick(colors);
+    el.style.animationDelay    = Math.random() * 0.3  + 's';
+    el.style.animationDuration = (0.6 + Math.random() * 0.4) + 's';
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    card.appendChild(el); setTimeout(() => el.remove(), 1200);
   }
+}
 
-  function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+// ─── KEYBOARD ────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && paused) { resumeGame(); return; }
+  if (paused) return;
+  if (e.key === 'Enter')      { answered ? nextQuestion() : verify(); }
+  if (e.key === 'ArrowRight' && answered) nextQuestion();
+});
 
-  // ─── QUESTION FLOW ──────────────────────────────────────
-  function nextQuestion() {
-    currentLevel = pickLevel();
-    const q = generateQuestion(currentLevel);
-    currentAnswer = q.answer;
-    questionCount++;
-
-    // Update formula display
-    const formulaEl = document.getElementById('formula');
-    formulaEl.innerHTML = `${q.a} <span class="${opClass(q.op)}">${q.op}</span> ${q.b}`;
-    formulaEl.classList.remove('shake', 'pop');
-    void formulaEl.offsetWidth; // reflow
-    formulaEl.classList.add('pop');
-
-    document.getElementById('question-num').textContent = `Question ${questionCount}`;
-    updateLevelBadge(currentLevel);
-
-    // Reset input
-    const input = document.getElementById('answer-input');
-    input.value = '';
-    input.classList.remove('correct', 'wrong');
-    input.disabled = false;
-    input.focus();
-
-    // Reset feedback
-    const fb = document.getElementById('feedback');
-    fb.className = 'feedback';
-    fb.textContent = '';
-
-    // Reset verify button
-    const btn = document.getElementById('btn-verify');
-    btn.disabled = false;
-
-    // Hide next button
-    document.getElementById('btn-next').classList.remove('visible');
-
-    answered = false;
-    startTimer();
-  }
-
-  function onTimeout() {
-    if (answered) return;
-    answered = true;
-    totalTests++;
-    saveStats();
-    updateScore();
-
-    const input = document.getElementById('answer-input');
-    input.classList.add('wrong');
-    input.disabled = true;
-
-    const formulaEl = document.getElementById('formula');
-    formulaEl.classList.add('shake');
-
-    showFeedback('timeout',
-      `⏰ Temps écoulé ! La réponse était <strong>${currentAnswer}</strong>`);
-
-    document.getElementById('btn-verify').disabled = true;
-    document.getElementById('btn-next').classList.add('visible');
-  }
-
-  function verify() {
-    if (answered) return;
-
-    const input = document.getElementById('answer-input');
-    const val = input.value.trim();
-    if (val === '') { input.focus(); return; }
-
-    stopTimer();
-    answered = true;
-    totalTests++;
-
-    const userAnswer = parseFloat(val);
-    // Accept answers rounded to 2 decimal places for divisions
-    const isCorrect = Math.abs(userAnswer - currentAnswer) < 0.01;
-
-    if (isCorrect) {
-      goodAnswers++;
-      points += currentLevel;
-      input.classList.add('correct');
-      const formulaEl = document.getElementById('formula');
-      formulaEl.classList.add('pop');
-      spawnConfetti();
-      showFeedback('correct', randomCorrect());
-    } else {
-      input.classList.add('wrong');
-      const formulaEl = document.getElementById('formula');
-      formulaEl.classList.add('shake');
-      showFeedback('wrong', randomWrong(currentAnswer));
-    }
-
-    saveStats();
-    updateScore();
-
-    document.getElementById('btn-verify').disabled = true;
-    document.getElementById('btn-next').classList.add('visible');
-  }
-
-  // ─── FEEDBACK MESSAGES ──────────────────────────────────
-  const correctMessages = [
-    "🎉 Bravo, bonne réponse !",
-    "⚡ Excellent, tu déchires !",
-    "🌟 Parfait, continue comme ça !",
-    "🦄 Génial, c'est exactement ça !",
-    "🔥 Super, t'assures grave !",
-    "👏 Bien joué, champion·ne !",
-  ];
-
-  const wrongMessages = [
-    "🤔 Hein ? T'es sûr·e ?",
-    "😅 Aïe, pas tout à fait !",
-    "🫣 Presque, mais non !",
-    "🙈 Oups, petite erreur !",
-    "💪 Raté, mais on reessaie !",
-  ];
-
-  function randomCorrect() { return correctMessages[Math.floor(Math.random() * correctMessages.length)]; }
-  function randomWrong(ans) {
-    const msg = wrongMessages[Math.floor(Math.random() * wrongMessages.length)];
-    return `${msg} La réponse était <strong>${ans}</strong>`;
-  }
-
-  function showFeedback(type, html) {
-    const fb = document.getElementById('feedback');
-    fb.innerHTML = html;
-    fb.className = 'feedback';
-    void fb.offsetWidth;
-    if (type === 'correct') fb.classList.add('correct-fb', 'show');
-    else if (type === 'wrong') fb.classList.add('wrong-fb', 'show');
-    else fb.classList.add('timeout-fb', 'show');
-  }
-
-  // ─── CONFETTI ───────────────────────────────────────────
-  function spawnConfetti() {
-    const card = document.getElementById('app');
-    const colors = ['#2563EB','#7C3AED','#EC4899','#16A34A','#F59E0B'];
-    for (let i = 0; i < 14; i++) {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      el.style.cssText = `
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 40}%;
-        background: ${colors[Math.floor(Math.random() * colors.length)]};
-        animation-delay: ${Math.random() * 0.3}s;
-        animation-duration: ${0.6 + Math.random() * 0.4}s;
-        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-      `;
-      card.appendChild(el);
-      setTimeout(() => el.remove(), 1200);
-    }
-  }
-
-  // ─── KEYBOARD ───────────────────────────────────────────
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      if (answered) {
-        nextQuestion();
-      } else {
-        verify();
-      }
-    }
-    if (e.key === 'ArrowRight' && answered) {
-      nextQuestion();
-    }
-  });
-
-  // Only allow numeric input in the field
-  document.getElementById('answer-input').addEventListener('keypress', (e) => {
-    const allowed = /[0-9\-\.]/;
-    if (!allowed.test(e.key)) e.preventDefault();
-  });
-
-  // ─── INIT ───────────────────────────────────────────────
-  loadSettings();
-  loadStats();
-
-  ['lvl-1','lvl-2','lvl-3'].forEach((id) => {
-    document.getElementById(id).addEventListener('change', () => {
-      saveSettings();
-    });
-  });
-
-  nextQuestion();
+document.getElementById('answer-input').addEventListener('keypress', (e) => {
+  if (!/[0-9\-\.]/.test(e.key)) e.preventDefault();
+});
 </script>
 </body>
 </html>
